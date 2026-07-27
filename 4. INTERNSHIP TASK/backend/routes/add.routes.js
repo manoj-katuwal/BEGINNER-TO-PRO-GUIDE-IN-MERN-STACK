@@ -1,10 +1,8 @@
-import { add } from "../controllers/add.controllers";
-
-const express = require("express")
+import {  addProduct } from "../controllers/add.controllers.js";
+import express from "express";
 
 const router = express.Router();
 
-router.get("/user", add)
+router.post("/add", addProduct);
 
-
-export default router
+export default router;
