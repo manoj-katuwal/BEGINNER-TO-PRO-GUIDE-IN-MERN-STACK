@@ -1,17 +1,22 @@
 import express from "express";
-import mongoose from "mongoose"; // Changed from require to import
+import mongoose from "mongoose"; 
+import dotenv from "dotenv";
 import addRoutes from "./routes/add.routes.js";
 
+dotenv.config();
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
 app.use("/products", addRoutes);
 
-mongoose.connect('mongodb://127.0.0.1:27017/demo')
-  .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/mydb";
+
+mongoose.connect(mongoUri)
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
