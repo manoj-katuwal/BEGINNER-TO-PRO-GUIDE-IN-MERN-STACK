@@ -4,11 +4,9 @@ const user = require("../models/user")
 exports.registerUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-    // 1. Validate input
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required" });
     }
-    // 2. Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "Username is already taken" });
