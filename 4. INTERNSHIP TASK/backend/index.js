@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose"; 
 import dotenv from "dotenv";
 import addRoutes from "./routes/add.routes.js";
+import userRoutes from './routes/user.routes.js'
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use("/products", addRoutes);
+app.use("/user", userRoutes);
 
 const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/mydb";
 
