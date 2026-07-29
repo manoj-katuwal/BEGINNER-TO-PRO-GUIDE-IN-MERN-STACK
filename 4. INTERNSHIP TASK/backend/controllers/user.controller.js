@@ -39,3 +39,18 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Registration failed", error: error.message });
   }
 };
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("username email");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(400).json({ message: "Invalid user ID", error: error.message });
+  }
+};
