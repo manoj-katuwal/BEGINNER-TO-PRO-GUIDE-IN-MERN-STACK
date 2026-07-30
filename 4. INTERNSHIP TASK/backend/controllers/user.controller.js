@@ -71,10 +71,67 @@ export const loginUser = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const payload = { id: user._id, username: user.username, email: user.email };
-    const token = jwt.sign(payload, process.env.JWT_SECRET || "secretkey", { expiresIn: "1h" });
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET || "secretkey", { expiresIn: "15m" });
+    const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET || "refreshsecret", { expiresIn: "7d" });
 
-    res.status(200).json({ message: "Login successful", token, user: payload });
+    user.refreshTokens = user.refreshTokens || [];
+    user.refreshTokens.push(refreshToken);
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "Login successful", token: accessToken, user: payload });
   } catch (error) {
     res.status(500).json({ message: "Login failed", error: error.message });
+  }
+};
+
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) return res.status(401).json({ message: "Refresh token missing" });
+
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || "refreshsecret");
+    } catch (err) {
+      return res.status(401).json({ message: "Invalid refresh token" });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user || !user.refreshTokens.includes(refreshToken)) {
+      return res.status(401).json({ message: "Refresh token not recognized" });
+    }
+
+    const payload = { id: user._id, username: user.username, email: user.email };
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET || "secretkey", { expiresIn: "15m" });
+
+    res.status(200).json({ token: accessToken });
+  } catch (error) {
+    res.status(500).json({ message: "Could not refresh token", error: error.message });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+    if (refreshToken) {
+      const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || "refreshsecret");
+      const user = await User.findById(decoded.id);
+      if (user) {
+        user.refreshTokens = (user.refreshTokens || []).filter(t => t !== refreshToken);
+        await user.save();
+      }
+    }
+
+    res.clearCookie("refreshToken");
+    res.status(200).json({ message: "Logged out" });
+  } catch (error) {
+    res.status(500).json({ message: "Logout failed", error: error.message });
   }
 };
