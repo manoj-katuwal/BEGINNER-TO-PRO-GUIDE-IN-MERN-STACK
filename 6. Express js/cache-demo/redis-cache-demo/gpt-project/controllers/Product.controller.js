@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 
+const cache = {};
 
 // Create a new product
 
@@ -20,6 +21,8 @@ export const createProduct = async (req, res) => {
       stock,
     });
 
+    delete cache.products; 
+
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -30,11 +33,16 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
+    if (cache.products) {
+      console.log("Fetching data from cache...");
+      return res.status(200).json(cache.products);
+    }
 
     console.log("Fetching data from MongoDB...");
     await fakeDatabaseDelay();
 
     const products = await Product.find();
+    cache.products = products;
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -72,6 +80,9 @@ export const updateProductById = async (req, res) => {
       { new: true },
     );
 
+        delete cache.products; 
+
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -85,6 +96,9 @@ export const updateProductById = async (req, res) => {
 export const deleteProductById = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
+
+        delete cache.products; 
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
