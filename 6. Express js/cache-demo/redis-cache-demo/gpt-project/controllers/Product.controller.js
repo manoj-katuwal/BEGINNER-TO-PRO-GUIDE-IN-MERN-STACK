@@ -1,6 +1,13 @@
 import Product from "../models/Product.js";
 
+
 // Create a new product
+
+const fakeDatabaseDelay = () => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 3000);
+  });
+};
 
 export const createProduct = async (req, res) => {
   try {
@@ -23,6 +30,10 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
+
+    console.log("Fetching data from MongoDB...");
+    await fakeDatabaseDelay();
+
     const products = await Product.find();
     res.status(200).json(products);
   } catch (error) {
