@@ -1,0 +1,22 @@
+import express from 'express';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import productRoutes from './routes/Product.routes.js';
+
+dotenv.config();
+
+const PORT = process.env.PORT || 3000;
+
+const app = express();
+await connectDB();
+
+app.use(express.json());
+app.use("/api/products", productRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Redis Cache API");
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
