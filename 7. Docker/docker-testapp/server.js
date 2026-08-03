@@ -7,19 +7,21 @@ const PORT = 5050;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-const MONGO_URL = "mongodb://admin:querty@mongo:27017";
+// const MONGO_URL = "mongodb://admin:qwerty@mongo:27017";
+const MONGO_URL = "mongodb://admin:qwerty@127.0.0.1:27017";
 const client = new MongoClient(MONGO_URL);
 
 //GET all users
 app.get("/getUsers", async (req, res) => {
-    await client.connect(MONGO_URL);
-    console.log('Connected successfully to server');
-
+  try {
+    await client.connect();
     const db = client.db("manoj-db");
-    const data = await db.collection('users').find({}).toArray();
-    
-    client.close();
+    const data = await db.collection("users").find({}).toArray();
     res.send(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  }
 });
 
 //POST new user
