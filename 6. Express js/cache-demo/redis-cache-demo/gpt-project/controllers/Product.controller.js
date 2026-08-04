@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import redisClient from "../config/redis.js";
 
 const cache = {};
 
@@ -21,8 +22,7 @@ export const createProduct = async (req, res) => {
       stock,
     });
 
-    delete cache.products; 
-
+    await redisClient.del("products");
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -33,16 +33,20 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    if (cache.products) {
-      console.log("Fetching data from cache...");
-      return res.status(200).json(cache.products);
+    const cachedProducts = await redisClient.get("products");
+
+    if (cachedProducts) {
+      console.log("Fetching data from Redis cache...");
+      return res.status(200).json(JSON.parse(cachedProducts));
     }
 
     console.log("Fetching data from MongoDB...");
     await fakeDatabaseDelay();
 
     const products = await Product.find();
-    cache.products = products;
+    await redisClient.set("products", JSON.stringify(products), {
+      EX: 60,
+    });
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -80,8 +84,9 @@ export const updateProductById = async (req, res) => {
       { new: true },
     );
 
-        delete cache.products; 
+    // delete cache.products;
 
+    await redisClient.del("products");
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -97,7 +102,8 @@ export const deleteProductById = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
 
-        delete cache.products; 
+    // delete cache.products;
+    await redisClient.del("products");
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
