@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Manoj Katwal — MERN Stack Developer. Building high-quality, scalable web applications with React, Node, Express, and MongoDB." />
+    <meta name="keywords" content="Manoj Katwal, MERN Stack Developer, Full Stack Developer, React, Node.js, Express, MongoDB, Portfolio, Software Engineer" />
+    <meta name="author" content="Manoj Katwal" />
+    <meta name="theme-color" id="theme-meta" content="#F8FAFC" />
+    <meta property="og:title" content="Manoj Katwal — MERN Stack Developer" />
+    <meta property="og:description" content="MERN Stack Developer crafting premium web experiences." />
+    <meta property="og:type" content="website" />
+    <title>Manoj Katwal — MERN Stack Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          const saved = localStorage.getItem('theme');
+          const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && preferDark)) {
+            document.documentElement.classList.add('dark');
+            document.querySelector('#theme-meta').setAttribute('content', '#0B0F19');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.querySelector('#theme-meta').setAttribute('content', '#F8FAFC');
+          }
+        } catch (e) {
+          const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (preferDark) {
+            document.documentElement.classList.add('dark');
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
