@@ -5,6 +5,10 @@ ENV MONGO_DB_PASSWORD=qwerty
 
 WORKDIR /docker-testapp
 
-COPY . /docker-testapp
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
 
 CMD ["node", "server.js"]
