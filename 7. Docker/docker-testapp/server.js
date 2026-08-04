@@ -9,21 +9,34 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // const MONGO_URL = "mongodb://admin:qwerty@mongo:27017";
-const MONGO_URL = "mongodb://admin:qwerty@127.0.0.1:27017/?authSource=admin";
+const MONGO_URL = "mongodb://admin:qwerty@127.0.0.1:27018/?authSource=admin";
 const client = new MongoClient(MONGO_URL);
+
+let db;
+
+async function startServer() {
+  try {
+    await client.connect();
+    db = client.db("manoj-db");
+    console.log("Connected successfully to MongoDB");
+    
+    app.listen(PORT, () => {
+      console.log(`server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to connect to database:", err);
+    process.exit(1);
+  }
+}
 
 //GET all users
 app.get("/getUsers", async (req, res) => {
   try {
-    await client.connect();
-    const db = client.db("manoj-db");
     const data = await db.collection("users").find({}).toArray();
     res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
-  } finally {
-    await client.close();
   }
 });
 
@@ -33,8 +46,6 @@ app.post("/addUser", async (req, res) => {
   console.log(req.body);
 
   try {
-    await client.connect();
-    const db = client.db("apnacollege-db");
     const data = await db.collection("users").insertOne(userObj);
     console.log(data);
     console.log("data inserted in DB");
@@ -42,12 +53,7 @@ app.post("/addUser", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Unable to add user");
-  } finally {
-    await client.close();
   }
 });
 
-
-app.listen(PORT, () => {
-    console.log(`server running on port ${PORT}`);
-});
+startServer();
