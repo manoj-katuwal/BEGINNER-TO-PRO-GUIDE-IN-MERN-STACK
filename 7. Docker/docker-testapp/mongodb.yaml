@@ -16,3 +16,15 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: qwerty
       ME_CONFIG_MONGODB_URL: mongodb://admin:qwerty@mongo:27017/
+    depends_on:
+      - mongo
+
+  testapp:
+    build: .
+    ports:
+      - "5050:5050"
+    environment:
+      MONGO_DB_USERNAME: admin
+      MONGO_DB_PASSWORD: qwerty
+    depends_on:
+      - mongo

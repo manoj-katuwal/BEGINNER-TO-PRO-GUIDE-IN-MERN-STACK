@@ -8,8 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// const MONGO_URL = "mongodb://admin:qwerty@mongo:27017";
-const MONGO_URL = "mongodb://admin:qwerty@127.0.0.1:27018/?authSource=admin";
+// URL-encode password to handle special characters
+const MONGO_URL =
+  `mongodb://admin:${encodeURIComponent('qwerty')}@mongo:27017/?authSource=admin`;
+
 const client = new MongoClient(MONGO_URL);
 
 let db;
@@ -19,7 +21,7 @@ async function startServer() {
     await client.connect();
     db = client.db("manoj-db");
     console.log("Connected successfully to MongoDB");
-    
+
     app.listen(PORT, () => {
       console.log(`server running on port ${PORT}`);
     });
