@@ -5,6 +5,10 @@ import errorHandler from "./middlewares/errorHandler.js";
 const app = express();
 
 app.use(express.json());
+
+//routes
+app.use("/api/v1", healthRoutes);
+
 //404 handler
 app.use((req, res, next) => {
   res.status(404).json({
@@ -16,8 +20,5 @@ app.use((req, res, next) => {
 
 //globar error handler
 app.use(errorHandler);
-
-//routes
-app.use("/api/v1", healthRoutes);
 
 export default app;
