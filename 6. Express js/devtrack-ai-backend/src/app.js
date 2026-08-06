@@ -1,16 +1,12 @@
 import express from "express";
+import healthRoutes from "./health/health.routes.js";
+
 
 const app = express();
 
 app.use(express.json());
+app.use("/api/v1", healthRoutes);
 
-app.get("/", (req, res) => {
-  res.send("DEVTRACK AI BACKEND IS RUNNING");
 
-  res.status(200).json({
-    success: true,
-    message: "DEVTRACK AI BACKEND IS RUNNING",
-  });
-});
 
 export default app;
