@@ -1,20 +1,28 @@
-import { createUser, findByEmail } from "./auth.repository.js";
 import bcrypt from "bcrypt";
+import * as authRepository from "./auth.repository.js";
+// import AppError from "../../utils/AppError.js";
+import AppError from "../../shared/utils/AppError.js";
 
-export const register = async (data) => {
-  const existingUser = await findByEmail(data.email);
+export const register = async (userData) => {
+  const { name, email, password } = userData;
+
+  const existingUser = await authRepository.findByEmail(email);
 
   if (existingUser) {
-    throw new Error("User already registerd");
+    throw new AppError("Email already exists", 409);
   }
 
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await createUser({
-    name: data.name,
-    email: data.email,
+  const user = await authRepository.createUser({
+    name,
+    email,
     password: hashedPassword,
   });
 
-  return user;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  };
 };
