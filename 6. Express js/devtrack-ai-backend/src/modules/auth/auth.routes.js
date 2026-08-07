@@ -1,7 +1,8 @@
 import express from "express";
-import { login, register } from "./auth.controller.js";
+import { login, register, refreshController } from "./auth.controller.js";
 import { validateLogin, validateRegister } from "./auth.validation.js";
 import { authenticate } from "../../middlewares/auth.middleware.js";
+
 
 const router = express.Router();
 
@@ -17,6 +18,8 @@ router.get("/me", authenticate, (req, res) => {
     },
   });
 });
+
+router.post("/refresh", refreshController);
 
 
 

@@ -15,3 +15,11 @@ export const login = asyncHandler(async (req, res) => {
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.LOGIN_SUCCESS, result);
 });
+
+
+export const refreshController = asyncHandler(async(req, res )=> {
+  const {refreshToken} = req.body;
+  const result = await authService.refreshToken(refreshToken);
+
+  successResponse(res, HTTP_STATUS.OK , AUTH_MESSAGES.TOKEN_REFRESED, result);
+})

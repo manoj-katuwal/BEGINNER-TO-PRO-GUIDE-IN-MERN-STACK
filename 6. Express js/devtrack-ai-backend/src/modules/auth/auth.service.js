@@ -8,6 +8,9 @@ import crypto from "crypto";
 import generateRefreshToken from "../../shared/utils/generateRefreshToken.js";
 import RefreshToken from "../refreshToken/refreshToken.model.js";
 import { createRefreshToken } from "../refreshToken/refreshToken.repository.js";
+import { findByToken } from "../refreshToken/refreshToken.repository.js";
+import AUTH_MESSAGES from "../../constants/messages.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 
 // import { use } from "react";
 
@@ -77,5 +80,53 @@ export const loginUser = async (credientials) => {
       email: user.email,
       name: user.name,
     },
+  };
+};
+
+export const refreshToken = async (refreshToken) => {
+  if (!refreshToken) {
+    throw new AppError(
+      AUTH_MESSAGES.REFRESH_TOKEN_REQUIRED,
+      HTTP_STATUS.BAD_REQUEST,
+    );
+  }
+
+  let decoded;
+
+  try {
+    decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+  } catch (error) {
+    throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.BAD_REQUEST);
+  }
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(refreshToken)
+    .digest("hex");
+
+  const session = await findByToken(hashedToken);
+
+  if (!session) {
+    throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED);
+  }
+
+  if (session.expiresAt < new Date()) {
+    throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED);
+  }
+
+  const user = await authRepository.findById(decoded.userId);
+
+  if (!user) {
+    throw new Error(AUTH_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED);
+  }
+
+  const accessToken = generateRefreshToken({
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+  });
+
+  return {
+    accessToken,
   };
 };
