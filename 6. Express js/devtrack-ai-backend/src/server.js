@@ -1,8 +1,7 @@
-
 import dotenv from "dotenv";
 import app from "./app.js";
 import sequelize from "./config/database.js";
-import "./modules/auth/auth.model.js"
+import "./modules/auth/auth.model.js";
 
 dotenv.config();
 
@@ -13,7 +12,7 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log("Database connected successfully");
 
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log("Database sync successfully");
 
     app.listen(PORT, () => {
