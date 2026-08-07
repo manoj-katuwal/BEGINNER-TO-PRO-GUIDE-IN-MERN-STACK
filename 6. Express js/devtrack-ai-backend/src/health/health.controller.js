@@ -1,12 +1,14 @@
 //  import AppError from "../utils/AppError.js";
 
+import HTTP_STATUS from "../constants/httpStatus.js";
+
 // FOR TESTING PURPOSES ONLY AFTER MAKING ERROR HANDLER MIDDLEWARE, YOU CAN USE THIS FUNCTION TO TEST THE ERROR HANDLER MIDDLEWARE
 // export const getHealth = (req, res, next) => {
 //   return next(new AppError("Health service is temporarily unavailable", 503));
 // };
 
 export const healthCheck = (req, res) => {
-  res.status(200).json({
+  res.status(HTTP_STATUS.OK).json({
     success: true,
     message: "Server is running",
     data: {

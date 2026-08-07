@@ -1,3 +1,5 @@
+import HTTP_STATUS from "../../constants/httpStatus.js";
+import AUTH_MESSAGES from "../../constants/messages.js";
 import { successResponse } from "../../shared/utils/apiResponse.js";
 import asyncHandler from "../../shared/utils/asyncHandler.js";
 import * as authService from "./auth.service.js";
@@ -5,11 +7,11 @@ import * as authService from "./auth.service.js";
 export const register = asyncHandler(async (req, res) => {
   const user = await authService.register(req.body);
 
-  successResponse(res, 201, "User registered successfully", user);
+  successResponse(res, HTTP_STATUS.CREATED, AUTH_MESSAGES.REGISTER_SUCCESS, user);
 });
 
 export const login = asyncHandler(async (req, res) => {
   const result = await authService.loginUser(req.body);
 
-  successResponse(res, 200, "User Login successfully", result);
+  successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.LOGIN_SUCCESS, result);
 });

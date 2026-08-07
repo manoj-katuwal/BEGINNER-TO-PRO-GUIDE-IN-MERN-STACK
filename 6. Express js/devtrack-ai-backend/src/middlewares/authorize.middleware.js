@@ -1,3 +1,4 @@
+import HTTP_STATUS from "../constants/httpStatus.js";
 import AppError from "../shared/utils/AppError.js";
 
 export const authorize = (...roles) => {
@@ -7,7 +8,7 @@ export const authorize = (...roles) => {
         new AppError(
           "Forbidden",
 
-          403,
+          HTTP_STATUS.FORBIDDEN,
         ),
       );
     }
