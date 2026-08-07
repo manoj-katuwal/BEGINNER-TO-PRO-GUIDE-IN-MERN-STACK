@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import * as authRepository from "./auth.repository.js";
 // import AppError from "../../utils/AppError.js";
 import AppError from "../../shared/utils/AppError.js";
+import {generateToken } from "../../shared/utils/generateToken.js";
 import jwt from "jsonwebtoken";
 // import { use } from "react";
 
@@ -44,16 +45,7 @@ export const loginUser = async (credientials) => {
     throw new AppError("Invalid email or password", 400);
   }
 
-  const token = jwt.sign(
-    {
-      userId: user.id,
-      email: user.email,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    },
-  );
+  const token = generateToken(user);
 
   return {
     token,
