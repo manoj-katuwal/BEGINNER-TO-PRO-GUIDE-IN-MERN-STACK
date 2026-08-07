@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 // import { use } from "react";
 
 export const register = async (userData) => {
-  const { name, email, password } = userData;
+  const { name, email, password , role } = userData;
 
   const existingUser = await authRepository.findByEmail(email);
 
@@ -21,6 +21,7 @@ export const register = async (userData) => {
     name,
     email,
     password: hashedPassword,
+    role : "user"
   });
 
   return {
