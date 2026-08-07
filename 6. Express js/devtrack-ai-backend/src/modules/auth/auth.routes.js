@@ -1,10 +1,11 @@
 import express from "express";
-import { register } from "./auth.controller.js";
-import { validateRegister } from "./auth.validation.js";
+import { login, register } from "./auth.controller.js";
+import { validateLogin, validateRegister } from "./auth.validation.js";
 
 const router = express.Router();
 
 router.post("/register",validateRegister, register);
+router.post("/login", validateLogin , login);
 
 
 

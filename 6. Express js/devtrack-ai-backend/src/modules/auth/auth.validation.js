@@ -12,3 +12,12 @@ export const validateRegister = async (req, res, next) => {
 
   next();
 };
+
+
+export const validateLogin = async (req, res, next ) => {
+    const {email, password} = req.body;
+    if (!email || !password){
+        return new AppError("Name, Email Field is required", 400)
+    }
+    next();
+}
