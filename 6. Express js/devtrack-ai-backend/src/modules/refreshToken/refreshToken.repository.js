@@ -4,9 +4,10 @@ import RefreshToken  from "./refreshToken.model.js";
     return RefreshToken.create(data, options);
 }
 
-export const findByToken = (token) => {
+export const findByToken = (token, options = {}) => {
     return RefreshToken.findOne({
-        where : {token}
+        where : {token},
+        ...options,
     })
 }
 
@@ -17,3 +18,33 @@ export const deleteById =  (id, options = {}) => {
         ...options,
     })
 }
+
+export const revoke = (id, options = {}) => {
+  return RefreshToken.update(
+    {
+      revokedAt: new Date(),
+    },
+    {
+      where: {
+        id,
+        revokedAt: null,
+      },
+      ...options,
+    },
+  );
+};
+
+export const revokeFamily = (familyId, options = {}) => {
+  return RefreshToken.update(
+    {
+      revokedAt: new Date(),
+    },
+    {
+      where: {
+        familyId,
+        revokedAt: null,
+      },
+      ...options,
+    },
+  );
+};

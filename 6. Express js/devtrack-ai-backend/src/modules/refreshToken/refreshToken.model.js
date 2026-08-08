@@ -19,6 +19,15 @@ const RefreshToken = sequelize.define("RefreshToken", {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  familyId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+
+  revokedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 });
 
 User.hasMany(RefreshToken, { foreignKey: "userId", onDelete: "CASCADE" });
