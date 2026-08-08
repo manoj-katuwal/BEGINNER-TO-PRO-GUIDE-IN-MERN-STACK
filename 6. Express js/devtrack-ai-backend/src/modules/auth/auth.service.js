@@ -1,18 +1,19 @@
 import bcrypt from "bcrypt";
 import * as authRepository from "./auth.repository.js";
-// import AppError from "../../utils/AppError.js";
 import AppError from "../../shared/utils/AppError.js";
 import { generateToken } from "../../shared/utils/generateToken.js";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
 import generateRefreshToken from "../../shared/utils/generateRefreshToken.js";
-import RefreshToken from "../refreshToken/refreshToken.model.js";
-import { createRefreshToken } from "../refreshToken/refreshToken.repository.js";
-import { findByToken } from "../refreshToken/refreshToken.repository.js";
+import * as refreshTokenRepository from "../refreshToken/refreshToken.repository.js";
 import AUTH_MESSAGES from "../../constants/messages.js";
 import HTTP_STATUS from "../../constants/httpStatus.js";
+import hashToken from "../../shared/utils/hashedToken.js";
+import sequelize from "../../config/database.js";
 
-// import { use } from "react";
+const getRefreshTokenExpiry = (token) => {
+  const { exp } = jwt.decode(token);
+  return new Date(exp * 1000);
+};
 
 export const register = async (userData) => {
   const { name, email, password, role } = userData;
@@ -59,17 +60,12 @@ export const loginUser = async (credientials) => {
     userId: user.id,
   });
 
-  const hashedRefreshToken = crypto
-    .createHash("sha256")
-    .update(refreshToken)
-    .digest("hex");
+  const hashedRefreshToken = hashToken(refreshToken);
 
-  await createRefreshToken({
+  await refreshTokenRepository.createRefreshToken({
     userId: user.id,
-
     token: hashedRefreshToken,
-
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    expiresAt: getRefreshTokenExpiry(refreshToken),
   });
 
   return {
@@ -96,17 +92,14 @@ export const refreshToken = async (refreshToken) => {
   try {
     decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
   } catch (error) {
-    throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.BAD_REQUEST);
+    throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED);
   }
 
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(refreshToken)
-    .digest("hex");
+  const hashedToken = hashToken(refreshToken);
 
-  const session = await findByToken(hashedToken);
+  const session = await refreshTokenRepository.findByToken(hashedToken);
 
-  if (!session) {
+  if (!session || session.userId !== decoded.userId) {
     throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED);
   }
 
@@ -117,16 +110,33 @@ export const refreshToken = async (refreshToken) => {
   const user = await authRepository.findById(decoded.userId);
 
   if (!user) {
-    throw new Error(AUTH_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED);
+    throw new AppError(AUTH_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.UNAUTHORIZED);
   }
 
-  const accessToken = generateRefreshToken({
+  const newAccessToken = generateToken(user);
+
+  const newRefreshToken = generateRefreshToken({
     userId: user.id,
-    email: user.email,
-    role: user.role,
+  });
+
+  const newHashedToken = hashToken(newRefreshToken);
+
+  const expiresAt = getRefreshTokenExpiry(newRefreshToken);
+
+  await sequelize.transaction(async (transaction) => {
+    await refreshTokenRepository.deleteById(session.id, { transaction });
+    await refreshTokenRepository.createRefreshToken(
+      {
+        userId: user.id,
+        token: newHashedToken,
+        expiresAt,
+      },
+      { transaction },
+    );
   });
 
   return {
-    accessToken,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
   };
 };
