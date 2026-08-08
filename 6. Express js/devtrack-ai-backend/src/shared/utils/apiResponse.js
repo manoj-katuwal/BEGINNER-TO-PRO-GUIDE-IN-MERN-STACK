@@ -3,6 +3,7 @@ export const successResponse = (res, statusCode , message , data ) => {
       success: true,
       message,
       data,
+      requestId: res.locals.requestId,
       timestamp: new Date().toISOString(),
     });
 

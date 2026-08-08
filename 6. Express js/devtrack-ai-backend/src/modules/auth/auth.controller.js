@@ -3,9 +3,10 @@ import AUTH_MESSAGES from "../../constants/messages.js";
 import { successResponse } from "../../shared/utils/apiResponse.js";
 import asyncHandler from "../../shared/utils/asyncHandler.js";
 import * as authService from "./auth.service.js";
+import getRequestContext from "../../shared/utils/requestContext.js";
 
 export const register = asyncHandler(async (req, res) => {
-  const user = await authService.register(req.body);
+  const user = await authService.register(req.body, getRequestContext(req));
 
   successResponse(
     res,
@@ -16,14 +17,14 @@ export const register = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  const result = await authService.loginUser(req.body);
+  const result = await authService.loginUser(req.body, getRequestContext(req));
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.LOGIN_SUCCESS, result);
 });
 
 export const refreshController = asyncHandler(async (req, res) => {
   const { refreshToken } = req.body;
-  const result = await authService.refreshToken(refreshToken);
+  const result = await authService.refreshToken(refreshToken, getRequestContext(req));
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.TOKEN_REFRESED, result);
 });
@@ -31,7 +32,7 @@ export const refreshController = asyncHandler(async (req, res) => {
 export const logoutController = asyncHandler(async (req, res) => {
   const { refreshToken } = req.body;
 
-  await authService.logout(refreshToken);
+  await authService.logout(refreshToken, getRequestContext(req));
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.LOGOUT_SUCCESS);
 });
