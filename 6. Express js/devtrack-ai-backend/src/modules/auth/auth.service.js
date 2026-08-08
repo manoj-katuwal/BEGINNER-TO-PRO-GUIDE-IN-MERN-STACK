@@ -140,3 +140,25 @@ export const refreshToken = async (refreshToken) => {
     refreshToken: newRefreshToken,
   };
 };
+
+
+export const logout = async (refreshToken) => {
+  if (!refreshToken) {
+    throw new AppError(
+      AUTH_MESSAGES.REFRESH_TOKEN_REQUIRED,
+      HTTP_STATUS.BAD_REQUEST,
+    );
+  }
+
+  const hashedToken = hashToken(refreshToken);
+
+  const session = await refreshTokenRepository.findByToken(hashedToken);
+
+  if (!session) {
+    throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED);
+  }
+
+  await refreshTokenRepository.deleteById(session.id);
+
+  return null;
+};

@@ -15,7 +15,15 @@ const AUTH_MESSAGES = {
 
   REFRESH_TOKEN_REQUIRED: "REFRESH_TOKEN_REQUIRED",
 
-  TOKEN_REFRESED: "Token refresh sucessfully"
+  TOKEN_REFRESED: "Token refresh sucessfully",
+
+  TOKEN_REFRESHED: "Access token refreshed successfully",
+
+  LOGOUT_SUCCESS: "Logout successful",
+
+  REFRESH_TOKEN_REQUIRED: "Refresh token is required",
+
+  INVALID_TOKEN: "Invalid or expired token",
 };
 
 export default AUTH_MESSAGES;
