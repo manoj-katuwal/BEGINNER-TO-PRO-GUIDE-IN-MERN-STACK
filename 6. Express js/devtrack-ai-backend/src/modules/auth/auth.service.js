@@ -151,20 +151,17 @@ export const refreshToken = async (refreshToken) => {
     }
 
     if (lockedSession.revokedAt) {
-      await refreshTokenRepository.revokeFamily(lockedSession.familyId, {
-        transaction,
-      });
+      await refreshTokenRepository.revokeFamily(lockedSession.familyId, transaction);
       return true;
     }
 
-    const [revokedCount] = await refreshTokenRepository.revoke(lockedSession.id, {
+    const [revokedCount] = await refreshTokenRepository.revoke(
+      lockedSession.id,
       transaction,
-    });
+    );
 
     if (revokedCount !== 1) {
-      await refreshTokenRepository.revokeFamily(lockedSession.familyId, {
-        transaction,
-      });
+      await refreshTokenRepository.revokeFamily(lockedSession.familyId, transaction);
       return true;
     }
 
@@ -204,7 +201,19 @@ export const logout = async (refreshToken) => {
     throw new AppError(AUTH_MESSAGES.INVALID_TOKEN, HTTP_STATUS.UNAUTHORIZED);
   }
 
-  await refreshTokenRepository.revoke(session.id);
+  if (session.revokedAt) {
+    return null;
+  }
+
+  const transaction = await sequelize.transaction();
+
+  try {
+    await refreshTokenRepository.revoke(session.id, transaction);
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
 
   return null;
 };

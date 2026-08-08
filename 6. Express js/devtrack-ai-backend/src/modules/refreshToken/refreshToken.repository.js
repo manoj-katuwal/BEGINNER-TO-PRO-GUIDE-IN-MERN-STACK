@@ -19,7 +19,7 @@ export const deleteById =  (id, options = {}) => {
     })
 }
 
-export const revoke = (id, options = {}) => {
+export const revoke = (id, transaction) => {
   return RefreshToken.update(
     {
       revokedAt: new Date(),
@@ -29,12 +29,12 @@ export const revoke = (id, options = {}) => {
         id,
         revokedAt: null,
       },
-      ...options,
+      transaction,
     },
   );
 };
 
-export const revokeFamily = (familyId, options = {}) => {
+export const revokeFamily = (familyId, transaction) => {
   return RefreshToken.update(
     {
       revokedAt: new Date(),
@@ -44,7 +44,7 @@ export const revokeFamily = (familyId, options = {}) => {
         familyId,
         revokedAt: null,
       },
-      ...options,
+      transaction,
     },
   );
 };
