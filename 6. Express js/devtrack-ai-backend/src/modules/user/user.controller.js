@@ -9,3 +9,14 @@ export const getMeController = asyncHandler(async (req, res) => {
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.PROFILE_FETCH, user);
 });
+
+
+export const updateProfileController = asyncHandler(async(req, res) => {
+    const userId = req.user.id;
+    const updatedData = req.body;
+
+   const updatedUser =  await userService.updateUser(userId, updatedData);
+
+    successResponse(res, HTTP_STATUS.OK , AUTH_MESSAGES.PROFILE_UPDATE,updatedUser )
+
+})

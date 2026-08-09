@@ -1,28 +1,32 @@
 const AUTH_MESSAGES = {
-  REGISTER_SUCCESS: "User registered successfully",
+  REGISTER_SUCCESS: "User registration completed successfully.",
 
-  LOGIN_SUCCESS: "Login successful",
+  LOGIN_SUCCESS: "Authentication successful. Welcome back.",
 
-  EMAIL_ALREADY_EXISTS: "Email already exists",
+  EMAIL_ALREADY_EXISTS: "The provided email address is already registered.",
 
-  INVALID_CREDENTIALS: "Invalid email or password",
+  INVALID_CREDENTIALS: "Invalid email address or password.",
 
-  USER_NOT_FOUND: "User not found",
+  USER_NOT_FOUND: "No account found with the associated details.",
 
-  UNAUTHORIZED: "Authentication required",
+  UNAUTHORIZED: "Access denied. Authentication credentials are required.",
 
-  REFRESH_TOKEN_REQUIRED: "Refresh token is required",
+  REFRESH_TOKEN_REQUIRED: "Session renewal failed. Refresh token is required.",
 
-  INVALID_TOKEN: "Invalid or expired token",
+  INVALID_TOKEN: "The provided token is invalid or has expired.",
 
-  TOKEN_REFRESED: "Token refreshed successfully",
+  TOKEN_REFRESED: "Session extended successfully.",
 
-  TOKEN_REFRESHED: "Access token refreshed successfully",
+  TOKEN_REFRESHED: "Access token has been successfully renewed.",
 
-  LOGOUT_SUCCESS: "Logout successful",
-  REFRESH_TOKEN_REUSE: "Refresh token reuse detected. Please log in again.",
+  LOGOUT_SUCCESS: "Logged out successfully. Session terminated.",
 
-  PROFILE_FETCH: "User Profile Fetched Successfully",
+  REFRESH_TOKEN_REUSE:
+    "Security alert: Refresh token reuse detected. Please re-authenticate.",
+
+  PROFILE_FETCH: "User profile data retrieved successfully.",
+
+  PROFILE_UPDATE: "User profile updates have been successfully applied.",
 };
 
 export default AUTH_MESSAGES;

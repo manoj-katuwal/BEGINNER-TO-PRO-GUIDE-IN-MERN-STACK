@@ -44,7 +44,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    linkedn: {
+    linkedin: {
       type: DataTypes.STRING,
       allowNull: true,
     },
