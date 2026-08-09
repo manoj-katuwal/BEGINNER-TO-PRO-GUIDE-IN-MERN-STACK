@@ -51,7 +51,6 @@ const User = sequelize.define(
     githubUsername: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: true,
     },
     website: {
       type: DataTypes.STRING,
