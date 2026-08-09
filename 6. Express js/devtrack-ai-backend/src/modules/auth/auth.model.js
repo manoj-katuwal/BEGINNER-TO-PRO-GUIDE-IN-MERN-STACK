@@ -26,12 +26,37 @@ const User = sequelize.define(
       allowNull: false,
     },
 
-    role : {
-      type : DataTypes.ENUM("user", "admin"),
-      allowNull : false, 
-      defaultValue : "user"
+    role: {
+      type: DataTypes.ENUM("user", "admin"),
+      allowNull: false,
+      defaultValue: "user",
+    },
 
-    }
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    profilePicture: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    linkedn: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    githubUsername: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+    website: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

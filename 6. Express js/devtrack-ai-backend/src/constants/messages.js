@@ -21,6 +21,8 @@ const AUTH_MESSAGES = {
 
   LOGOUT_SUCCESS: "Logout successful",
   REFRESH_TOKEN_REUSE: "Refresh token reuse detected. Please log in again.",
+
+  PROFILE_FETCH: "User Profile Fetched Successfully",
 };
 
 export default AUTH_MESSAGES;
