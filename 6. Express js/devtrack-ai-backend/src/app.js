@@ -4,6 +4,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import requestId from "./middlewares/requestId.js";
 import userRoutes from "./modules/user/user.routes.js";
+import userSkillRoutes from "./modules/userSkill/userSkill.routes.js";
 
 const app = express();
 
@@ -12,8 +13,9 @@ app.use(express.json());
 
 //routes
 app.use("/api/v1", healthRoutes);
-app.use("/api/v1/auth",authRoutes );
-app.use("/api/v1/user" , userRoutes); 
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/user/me/skills", userSkillRoutes);
 
 //404 handler
 app.use((req, res, next) => {

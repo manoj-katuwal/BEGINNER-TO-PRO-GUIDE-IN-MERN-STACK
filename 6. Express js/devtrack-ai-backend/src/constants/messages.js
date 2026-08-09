@@ -27,6 +27,9 @@ const AUTH_MESSAGES = {
   PROFILE_FETCH: "User profile data retrieved successfully.",
 
   PROFILE_UPDATE: "User profile updates have been successfully applied.",
+
+  SKILL_FETCHED :    "User skills fetched successfully",
+
 };
 
 export default AUTH_MESSAGES;
