@@ -2,10 +2,20 @@ import AUTH_MESSAGES from "../../constants/messages.js";
 import HTTP_STATUS from "../../constants/httpStatus.js";
 import { successResponse } from "../../shared/utils/apiResponse.js";
 import asyncHandler from "../../shared/utils/asyncHandler.js";
+import { logAuthEvent } from "../../shared/utils/logAuthEvent.js";
 import * as userSkillService from "./userSkill.service.js";
 
 export const getSkillController = asyncHandler(async (req, res) => {
   const userId = req.user.id;
+
+  logAuthEvent({
+    event: "USER_SKILL_FETCHED",
+    message: "User skills fetched successfully",
+    userId,
+    requestId: req.requestId,
+    ip: req.ip,
+    userAgent: req.get("user-agent"),
+  });
 
   const skills = await userSkillService.getUserSkills(userId);
 
@@ -17,6 +27,15 @@ export const createSkillController = asyncHandler(async (req, res) => {
   const data = req.body;
 
   const skill = await userSkillService.createUserSkills(userId, data);
+
+  logAuthEvent({
+    event: "USER_SKILL_CREATED",
+    message: "User skill created successfully",
+    userId,
+    requestId: req.requestId,
+    ip: req.ip,
+    userAgent: req.get("user-agent"),
+  });
 
   successResponse(
     res,
@@ -36,7 +55,15 @@ export const updateSkillController = asyncHandler(async (req, res) => {
     userId,
     data,
   );
-  console.log(updatedData);
+
+  logAuthEvent({
+    event: "USER_SKILL_UPDATED",
+    message: "User skill updated successfully",
+    userId,
+    requestId: req.requestId,
+    ip: req.ip,
+    userAgent: req.get("user-agent"),
+  });
 
   successResponse(
     res,
@@ -51,6 +78,15 @@ export const deleteSkillController = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
   await userSkillService.deleteUserSkills(skillId, userId);
+
+  logAuthEvent({
+    event: "USER_SKILL_DELETED",
+    message: "User skill deleted successfully",
+    userId,
+    requestId: req.requestId,
+    ip: req.ip,
+    userAgent: req.get("user-agent"),
+  });
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.SKILL_DELETE_SUCCESS);
 });
