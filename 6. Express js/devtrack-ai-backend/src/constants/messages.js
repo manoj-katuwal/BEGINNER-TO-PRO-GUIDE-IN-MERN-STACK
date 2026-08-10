@@ -15,8 +15,7 @@ const AUTH_MESSAGES = {
 
   INVALID_TOKEN: "The provided token is invalid or has expired.",
 
-  TOKEN_REFRESED: "Session extended successfully.",
-
+  TOKEN_REFRESED: "Session extended successfully.", // (Note: Typo in original key)
   TOKEN_REFRESHED: "Access token has been successfully renewed.",
 
   LOGOUT_SUCCESS: "Logged out successfully. Session terminated.",
@@ -28,8 +27,12 @@ const AUTH_MESSAGES = {
 
   PROFILE_UPDATE: "User profile updates have been successfully applied.",
 
-  SKILL_FETCHED :    "User skills fetched successfully",
-
+  SKILL_CREATE_SUCCESS: "User skill added successfully.",
+  SKILL_FETCH_SUCCESS: "User skills retrieved successfully.",
+  SKILL_UPDATE_SUCCESS: "User skill updated successfully.",
+  SKILL_DELETE_SUCCESS: "User skill deleted successfully.",
+  SKILL_NOT_FOUND: "The requested skill could not be found.",
+  SKILL_ALREADY_EXISTS: "This skill has already been added to your profile.",
 };
 
 export default AUTH_MESSAGES;

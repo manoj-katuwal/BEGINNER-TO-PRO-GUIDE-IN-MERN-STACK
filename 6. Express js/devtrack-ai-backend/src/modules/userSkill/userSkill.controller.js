@@ -11,3 +11,17 @@ export const getSkillController = asyncHandler(async (req, res) => {
 
   successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.SKILL_FETCHED, skills);
 });
+
+export const createSkillController = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const data = req.body;
+
+  const skill = await userSkillService.createUserSkills(userId, data);
+
+  successResponse(
+    res,
+    HTTP_STATUS.CREATED,
+    AUTH_MESSAGES.SKILL_CREATE_SUCCESS,
+    skill,
+  );
+});

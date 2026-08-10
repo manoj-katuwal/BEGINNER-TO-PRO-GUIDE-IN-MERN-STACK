@@ -5,3 +5,14 @@ export const getUserSkills = async (userId) => {
 
   return skills;
 };
+
+export const createUserSkills = async (userId, data) => {
+
+  const skillsdata = {
+    userId ,
+    ...data
+  }
+  const newSkill = await userSkillRepository.createSkill(skillsdata);
+
+  return newSkill;
+};
