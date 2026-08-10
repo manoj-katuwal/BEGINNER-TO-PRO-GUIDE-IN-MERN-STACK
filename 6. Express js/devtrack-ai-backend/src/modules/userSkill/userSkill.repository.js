@@ -1,7 +1,7 @@
-import UserSkill from "./userSkill.model.js"
+import UserSkill from "./userSkill.model.js";
 
 export const findByUserId = async (userId) => {
-    await UserSkill.findAll({
-        where : {userId}
-    })
-}
+  return await UserSkill.findAll({
+    where: { userId },
+  });
+};

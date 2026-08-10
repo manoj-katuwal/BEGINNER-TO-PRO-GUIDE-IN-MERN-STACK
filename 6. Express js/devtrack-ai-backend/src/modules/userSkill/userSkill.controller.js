@@ -1,4 +1,5 @@
 import AUTH_MESSAGES from "../../constants/messages.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 import { successResponse } from "../../shared/utils/apiResponse.js";
 import asyncHandler from "../../shared/utils/asyncHandler.js";
 import * as userSkillService from "./userSkill.service.js";

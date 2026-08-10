@@ -14,8 +14,8 @@ app.use(express.json());
 //routes
 app.use("/api/v1", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/user/me/skills", userSkillRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/users", userSkillRoutes);
 
 //404 handler
 app.use((req, res, next) => {

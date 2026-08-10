@@ -5,7 +5,7 @@ import { getSkillController } from "./userSkill.controller.js";
 
 const router = express.Router();
 
-router.get("/", authenticate, getSkillController);
+router.get("/me/skills", authenticate, getSkillController);
 
 
 
