@@ -45,3 +45,12 @@ export const updateSkillController = asyncHandler(async (req, res) => {
     updatedData,
   );
 });
+
+export const deleteSkillController = asyncHandler(async (req, res) => {
+  const skillId = req.params.id;
+  const userId = req.user.id;
+
+  await userSkillService.deleteUserSkills(skillId, userId);
+
+  successResponse(res, HTTP_STATUS.OK, AUTH_MESSAGES.SKILL_DELETE_SUCCESS);
+});

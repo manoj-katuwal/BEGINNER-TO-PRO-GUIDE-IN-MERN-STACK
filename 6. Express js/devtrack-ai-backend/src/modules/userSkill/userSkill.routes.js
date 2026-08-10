@@ -2,6 +2,7 @@ import express from "express";
 import { authenticate } from "../../middlewares/auth.middleware.js";
 import {
   createSkillController,
+  deleteSkillController,
   getSkillController,
   updateSkillController,
 } from "./userSkill.controller.js";
@@ -19,5 +20,6 @@ router.post(
 );
 
 router.patch("/me/skills/:id", authenticate, updateSkillController);
+router.delete("/me/skills/:id" , authenticate , deleteSkillController);
 
 export default router;

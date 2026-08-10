@@ -27,3 +27,12 @@ export const findByIdAndUserId = async (id, userId) => {
     },
   });
 };
+
+export const deleteSkill = async (skillId, userId) => {
+  return await UserSkill.destroy({
+    where: {
+      id: skillId,
+      userId,
+    },
+  });
+};

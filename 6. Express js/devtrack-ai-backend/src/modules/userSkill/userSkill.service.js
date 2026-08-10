@@ -43,3 +43,13 @@ export const updateUserSkills = async (id, userId, data) => {
 
   return updatedData;
 };
+
+export const deleteUserSkills = async (skillId, userId) => {
+  const deletedCount = await userSkillRepository.deleteSkill(skillId, userId);
+
+  if (deletedCount === 0) {
+    throw new AppError(AUTH_MESSAGES.SKILL_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+  }
+
+  return;
+};
