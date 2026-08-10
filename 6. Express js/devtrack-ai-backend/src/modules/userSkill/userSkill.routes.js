@@ -3,6 +3,7 @@ import { authenticate } from "../../middlewares/auth.middleware.js";
 import {
   createSkillController,
   getSkillController,
+  updateSkillController,
 } from "./userSkill.controller.js";
 import { validate } from "../../middlewares/validate.js";
 import { userSkillsSchema } from "./userSkill.validation.js";
@@ -16,5 +17,7 @@ router.post(
   validate(userSkillsSchema),
   createSkillController,
 );
+
+router.patch("/me/skills/:id", authenticate, updateSkillController);
 
 export default router;

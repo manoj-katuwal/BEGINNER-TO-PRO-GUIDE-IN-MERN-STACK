@@ -10,18 +10,36 @@ export const getUserSkills = async (userId) => {
 };
 
 export const createUserSkills = async (userId, data) => {
+  const existingSkill = await userSkillRepository.findByUserIdAndName(
+    userId,
+    data.name,
+  );
 
-  const existingSkill = await userSkillRepository.findByUserIdAndName(userId , data.name);
-
-  if(existingSkill){
-    throw new AppError(AUTH_MESSAGES.SKILL_ALREADY_EXISTS , HTTP_STATUS.CONFLICT)
+  if (existingSkill) {
+    throw new AppError(
+      AUTH_MESSAGES.SKILL_ALREADY_EXISTS,
+      HTTP_STATUS.CONFLICT,
+    );
   }
 
   const skillsdata = {
-    userId ,
-    ...data
-  }
+    userId,
+    ...data,
+  };
   const newSkill = await userSkillRepository.createSkill(skillsdata);
 
   return newSkill;
+};
+
+export const updateUserSkills = async (id, userId, data) => {
+  const skill = await userSkillRepository.findByIdAndUserId(id, userId);
+  console.log(skill);
+
+  if (!skill) {
+    throw new AppError(AUTH_MESSAGES.SKILL_NOT_FOUND, HTTP_STATUS.NOT_FOUND);
+  }
+
+  const updatedData = await skill.update(data);
+
+  return updatedData;
 };

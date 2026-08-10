@@ -25,3 +25,23 @@ export const createSkillController = asyncHandler(async (req, res) => {
     skill,
   );
 });
+
+export const updateSkillController = asyncHandler(async (req, res) => {
+  const skillId = req.params.id;
+  const userId = req.user.id;
+  const data = req.body;
+
+  const updatedData = await userSkillService.updateUserSkills(
+    skillId,
+    userId,
+    data,
+  );
+  console.log(updatedData);
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    AUTH_MESSAGES.SKILL_UPDATE_SUCCESS,
+    updatedData,
+  );
+});

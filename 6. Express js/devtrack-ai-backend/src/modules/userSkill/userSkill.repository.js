@@ -6,17 +6,24 @@ export const findByUserId = async (userId) => {
   });
 };
 
-
 export const createSkill = async (data) => {
-    return await UserSkill.create(data);
-}
-
+  return await UserSkill.create(data);
+};
 
 export const findByUserIdAndName = async (userId, name) => {
   return await UserSkill.findOne({
     where: {
       userId,
       name,
+    },
+  });
+};
+
+export const findByIdAndUserId = async (id, userId) => {
+  return await UserSkill.findOne({
+    where: {
+      id,
+      userId,
     },
   });
 };
