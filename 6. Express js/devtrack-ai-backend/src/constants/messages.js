@@ -31,4 +31,21 @@ export const USER_SETTINGS_MESSAGES = {
   SETTINGS_NOT_FOUND: "The requested settings could not be found.",
 };
 
+export const GITHUB_OAUTH_MESSAGES = {
+  CONNECT_SUCCESS: "GitHub account connected successfully.",
+  DISCONNECT_SUCCESS: "GitHub account disconnected successfully.",
+  ALREADY_CONNECTED: "This GitHub account is already linked to a user.",
+  USER_ALREADY_LINKED:
+    "Your DevTrack account is already linked to a GitHub profile.",
+  AUTH_SUCCESS: "Authenticated via GitHub successfully. Welcome back.",
+  STATE_MISMATCH:
+    "Security validation failed. State parameter mismatch or expired.",
+  CODE_REQUIRED: "Authorization code missing from GitHub redirect.",
+  TOKEN_EXCHANGE_FAILED:
+    "Failed to exchange authorization code for GitHub access token.",
+  PROFILE_FETCH_FAILED: "Failed to retrieve profile data from GitHub.",
+  OAUTH_TIMEOUT:
+    "The GitHub authentication session has timed out. Please try again.",
+};
+
 export default AUTH_MESSAGES;
