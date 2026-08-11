@@ -11,3 +11,9 @@ export const createSettings = async (userId) => {
     userId,
   });
 };
+
+export const updateSettings = async (userId, data) => {
+  return await userSettings.update(data, {
+    where: { userId },
+  });
+};
