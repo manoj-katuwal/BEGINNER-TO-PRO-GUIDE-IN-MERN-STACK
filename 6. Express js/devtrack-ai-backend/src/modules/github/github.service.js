@@ -2,6 +2,8 @@ import * as githubRepository from "./github.repository.js";
 import AppError from "../../shared/utils/AppError.js";
 import HTTP_STATUS from "../../constants/httpStatus.js";
 import { encrypt } from "../../shared/utils/encrypt.js";
+import { decrypt } from "../../shared/utils/decrypt.js";
+import { getGithubUser as getGithubUserFromClient } from "./github.client.js";
 
 export const createOAuthState = async (state, userId) => {
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -42,9 +44,16 @@ export const exchangeCodeForToken = async (code) => {
     }),
   });
 
-  const data = await response.json();
+  const responseText = await response.text();
+  let data = {};
 
-  if (!response.ok || data.error) {
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    data = Object.fromEntries(new URLSearchParams(responseText).entries());
+  }
+
+  if (!response.ok || data.error || !data.access_token) {
     throw new AppError(
       "Failed to exchange GitHub authorization code",
       HTTP_STATUS.BAD_GATEWAY,
@@ -55,20 +64,7 @@ export const exchangeCodeForToken = async (code) => {
 };
 
 export const getGithubUser = async (accessToken) => {
-  const response = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/vnd.github+json",
-    },
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new AppError("Failed to fetch GitHub user", HTTP_STATUS.BAD_GATEWAY);
-  }
-
-  return data;
+  return await getGithubUserFromClient(accessToken);
 };
 
 export const deleteOAuthState = async (state) => {
@@ -80,7 +76,21 @@ export const saveGithubAccount = async ({
   githubUser,
   accessToken,
 }) => {
+  if (!accessToken) {
+    throw new AppError(
+      "GitHub access token is missing",
+      HTTP_STATUS.BAD_GATEWAY,
+    );
+  }
+
   const encryptedAccessToken = encrypt(accessToken);
+
+  if (!encryptedAccessToken) {
+    throw new AppError(
+      "Failed to encrypt GitHub access token",
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    );
+  }
 
   const data = {
     userId,
@@ -99,4 +109,18 @@ export const saveGithubAccount = async ({
   }
 
   return await githubRepository.createGithubAccount(data);
+};
+
+export const getGithubProfile = async (userId) => {
+  const githubAccount = await githubRepository.findGithubAccountByUserId(userId);
+
+  if (!githubAccount) {
+    throw new Error("GitHub account not connected");
+  }
+
+  const accessToken = decrypt(githubAccount.encryptedAccessToken);
+
+  const githubUser = await getGithubUser(accessToken);
+
+  return githubUser;
 };

@@ -1,8 +1,19 @@
 import crypto from "crypto";
+import dotenv from "dotenv";
 
-const ALGORITHM = "aes-256-gcm";
+dotenv.config();
 
-const KEY = Buffer.from(process.env.GITHUB_TOKEN_ENCRYPTION_KEY, "hex");
+export const ALGORITHM = "aes-256-gcm";
+
+const getEncryptionKey = () => {
+  const rawKey =
+    process.env.GITHUB_TOKEN_ENCRYPTION_KEY ||
+    "0000000000000000000000000000000000000000000000000000000000000000";
+
+  return crypto.createHash("sha256").update(rawKey).digest();
+};
+
+export const KEY = getEncryptionKey();
 
 export const encrypt = (text) => {
   const iv = crypto.randomBytes(12);

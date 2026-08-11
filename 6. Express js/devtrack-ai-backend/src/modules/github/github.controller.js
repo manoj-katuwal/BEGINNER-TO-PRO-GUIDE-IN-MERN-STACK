@@ -21,8 +21,6 @@ export const connectGithub = asyncHandler(async (req, res) => {
   res.redirect(githubUrl);
 });
 
-
-
 export const githubCallback = asyncHandler(async (req, res) => {
   const { code, state } = req.query;
 
@@ -39,11 +37,13 @@ export const githubCallback = asyncHandler(async (req, res) => {
   // 2. Exchange code for access token
   const accessToken = await githubService.exchangeCodeForToken(code);
 
+  console.log("GitHub access token received:", Boolean(accessToken));
+
   // 3. Get GitHub user information
   const githubUser = await githubService.getGithubUser(accessToken);
 
   // 4. Encrypt token + save GitHub account
-  await githubService.saveGithubAccount({
+  const githubAccount = await githubService.saveGithubAccount({
     userId: oauthState.userId,
     githubUser,
     accessToken,
@@ -51,16 +51,30 @@ export const githubCallback = asyncHandler(async (req, res) => {
 
   await githubService.deleteOAuthState(state);
 
-  console.log("GitHub User ID:", githubUser.id);
-  console.log("GitHub Username:", githubUser.login);
+  return successResponse(
+    res,
+    HTTP_STATUS.OK,
+    GITHUB_OAUTH_MESSAGES.CONNECT_SUCCESS,
+    {
+      githubId: githubAccount.githubId,
+      githubUsername: githubAccount.githubUsername,
+    },
+  );
+});
+
+// Uses the encrypted database token only on the server, then calls GitHub's API.
+export const getGithubProfile = asyncHandler(async (req, res) => {
+  const githubUser = await githubService.getGithubProfile(req.user.id);
 
   return successResponse(
     res,
     HTTP_STATUS.OK,
-    "GitHub account connected successfully",
+    "GitHub profile retrieved successfully",
     {
       githubId: githubUser.id,
       githubUsername: githubUser.login,
+      name: githubUser.name,
+      avatarUrl: githubUser.avatar_url,
     },
   );
 });
