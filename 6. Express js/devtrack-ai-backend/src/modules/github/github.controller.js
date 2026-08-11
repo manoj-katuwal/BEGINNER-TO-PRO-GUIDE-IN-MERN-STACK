@@ -22,7 +22,12 @@ export const connectGithub = asyncHandler(async (req, res) => {
 });
 
 export const githubCallback = asyncHandler(async (req, res) => {
+  console.log("🔥🔥 GITHUB CALLBACK HIT");
+
   const { code, state } = req.query;
+
+  console.log("CODE EXISTS:", Boolean(code));
+  console.log("STATE EXISTS:", Boolean(state));
 
   if (!code || !state) {
     throw new AppError(

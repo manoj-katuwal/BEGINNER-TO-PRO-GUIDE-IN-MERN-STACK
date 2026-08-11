@@ -8,7 +8,7 @@ const test = async () => {
   try {
     await sequelize.authenticate();
 
-    const userId = 1;
+    const userId = 7;
 
     const githubUser = await getGithubProfile(userId);
 
