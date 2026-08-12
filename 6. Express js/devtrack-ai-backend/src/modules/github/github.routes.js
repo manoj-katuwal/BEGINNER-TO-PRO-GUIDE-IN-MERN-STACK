@@ -1,10 +1,10 @@
 import express from "express";
-import { githubAuth } from "./github.controller.js";
+import { githubAuth, githubCallback } from "./github.controller.js";
 import { authenticate } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/auth",authenticate,  githubAuth);
-router.get()
+router.get("/auth", authenticate, githubAuth);
+router.get("/callback", githubCallback);
 
 export default router;

@@ -46,6 +46,8 @@ export const GITHUB_OAUTH_MESSAGES = {
   PROFILE_FETCH_FAILED: "Failed to retrieve profile data from GitHub.",
   OAUTH_TIMEOUT:
     "The GitHub authentication session has timed out. Please try again.",
+    OAUTH_VERIFIED : "GitHub OAuth state verified successfully."
+
 };
 
 export default AUTH_MESSAGES;
