@@ -72,3 +72,11 @@ export const saveGithubAccount = async (userId, githubProfile, accessToken) => {
 
   return await githubRepo.createGithubAccount(data);
 };
+
+export const getGithubAccount = async (userId) => {
+  return await githubRepo.findGithubAccountByUserId(userId);
+};
+
+export const deleteGithubAccount = async (userId) => {
+  return await githubRepo.deleteGithubAccount(userId);
+};

@@ -78,3 +78,44 @@ export const githubCallback = asyncHandler(async (req, res) => {
     githubUsername: githubAccount.githubUsername,
   });
 });
+
+export const getGithubAccount = asyncHandler(async (req, res) => {
+  const githubAccount = await githubService.getGithubAccount(req.user.id);
+
+  if (!githubAccount) {
+    throw new AppError(
+      "No GitHub account is connected to this user.",
+      HTTP_STATUS.NOT_FOUND,
+    );
+  }
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    "GitHub account retrieved successfully.",
+    {
+      githubId: githubAccount.githubId,
+      githubUsername: githubAccount.githubUsername,
+      avatarUrl: githubAccount.avatarUrl,
+      profileUrl: githubAccount.profileUrl,
+      connectedAt: githubAccount.connectedAt,
+    },
+  );
+});
+
+export const deleteGithubAccount = asyncHandler(async (req, res) => {
+  const deletedCount = await githubService.deleteGithubAccount(req.user.id);
+
+  if (!deletedCount) {
+    throw new AppError(
+      "No GitHub account is connected to this user.",
+      HTTP_STATUS.NOT_FOUND,
+    );
+  }
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    GITHUB_OAUTH_MESSAGES.DISCONNECT_SUCCESS,
+  );
+});

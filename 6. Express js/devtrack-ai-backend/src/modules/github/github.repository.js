@@ -44,3 +44,12 @@ export const updateGithubAccount = async (userId, data) => {
   return await githubAccount.update(data);
 };
 
+export const deleteGithubAccount = async (userId) => {
+  return await GithubAccount.destroy({
+    where: {
+      userId,
+    },
+  });
+};
+
+
