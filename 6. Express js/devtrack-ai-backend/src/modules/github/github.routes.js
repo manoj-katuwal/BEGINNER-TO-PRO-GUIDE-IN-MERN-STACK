@@ -5,5 +5,6 @@ import { authenticate } from "../../middlewares/auth.middleware.js";
 const router = express.Router();
 
 router.get("/auth",authenticate,  githubAuth);
+router.get()
 
 export default router;
