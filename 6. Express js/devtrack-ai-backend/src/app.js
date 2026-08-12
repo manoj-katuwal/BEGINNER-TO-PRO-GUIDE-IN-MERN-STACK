@@ -6,7 +6,6 @@ import requestId from "./middlewares/requestId.js";
 import userRoutes from "./modules/user/user.routes.js";
 import userSkillRoutes from "./modules/userSkill/userSkill.routes.js";
 import userSettingsRoutes from "./modules/userSettings/userSettings.routes.js";
-import githubRoutes from "./modules/github/github.routes.js";
 
 const app = express();
 
@@ -19,7 +18,6 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/users", userSkillRoutes);
 app.use("/api/v1/users", userSettingsRoutes);
-app.use("/api/github", githubRoutes);
 
 //404 handler
 app.use((req, res, next) => {
