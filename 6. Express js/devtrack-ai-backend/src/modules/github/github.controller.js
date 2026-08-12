@@ -5,6 +5,7 @@ import AppError from "../../shared/utils/AppError.js";
 import HTTP_STATUS from "../../constants/httpStatus.js";
 import { GITHUB_OAUTH_MESSAGES } from "../../constants/messages.js";
 import { successResponse } from "../../shared/utils/apiResponse.js";
+import { decrypt } from "../../shared/utils/decrypt.js";
 
 export const githubAuth = asyncHandler(async (req, res) => {
   const state = generateOAuthState();
@@ -100,6 +101,27 @@ export const getGithubAccount = asyncHandler(async (req, res) => {
       profileUrl: githubAccount.profileUrl,
       connectedAt: githubAccount.connectedAt,
     },
+  );
+});
+
+export const getGithubRepositories = asyncHandler(async (req, res) => {
+  const githubAccount = await githubService.getGithubAccount(req.user.id);
+
+  if (!githubAccount) {
+    throw new AppError(
+      "No GitHub account is connected to this user.",
+      HTTP_STATUS.NOT_FOUND,
+    );
+  }
+
+  const accessToken = decrypt(githubAccount.accessToken);
+  const repositories = await githubService.getGithubRepositories(accessToken);
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    "GitHub repositories retrieved successfully.",
+    repositories,
   );
 });
 

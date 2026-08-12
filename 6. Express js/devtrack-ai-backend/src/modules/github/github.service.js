@@ -80,3 +80,20 @@ export const getGithubAccount = async (userId) => {
 export const deleteGithubAccount = async (userId) => {
   return await githubRepo.deleteGithubAccount(userId);
 };
+
+export const getGithubRepositories = async (accessToken) => {
+
+  const response = await axios.get("https://api.github.com/user/repos", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: "application/vnd.github+json",
+    },
+
+    params: {
+      per_page: 100,
+      sort: "updated",
+    },
+  });
+
+  return response.data;
+};
