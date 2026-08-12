@@ -1,5 +1,7 @@
 import * as githubRepo from "./github.repository.js";
 import axios from "axios";
+// import { encrypt } from "../../shared/utils/encryption.js";
+import { encrypt } from "../../shared/utils/encrypt.js";
 
 export const saveOAuthState = async (userId, state, expiresAt) => {
   return await githubRepo.createOAuthState({
@@ -35,4 +37,38 @@ export const exchangeCodeForToken = async (code) => {
 
 export const deleteOAuthState = async (state) => {
   return await githubRepo.deleteOAuthState(state);
+};
+
+export const getGithubProfile = async (accessToken) => {
+  const response = await axios.get("https://api.github.com/user", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+  console.log(response);
+  console.log(response.data);
+
+  return await response.data;
+};
+
+export const saveGithubAccount = async (userId, githubProfile, accessToken) => {
+  const encryptedToken = encrypt(accessToken);
+
+  const data = {
+    userId,
+    githubId: githubProfile.id,
+    githubUsername: githubProfile.login,
+    accessToken: encryptedToken,
+    avatarUrl: githubProfile.avatar_url,
+    profileUrl: githubProfile.html_url,
+  };
+
+  const existingAccount = await githubRepo.findGithubAccountByUserId(userId);
+
+  if (existingAccount) {
+    return await githubRepo.updateGithubAccount(userId, data);
+  }
+
+  return await githubRepo.createGithubAccount(data);
 };

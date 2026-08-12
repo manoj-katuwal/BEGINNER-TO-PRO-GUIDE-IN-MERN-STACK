@@ -2,9 +2,8 @@ import asyncHandler from "../../shared/utils/asyncHandler.js";
 import { generateOAuthState } from "../../shared/utils/generateOAuthState.js";
 import * as githubService from "./github.service.js";
 import AppError from "../../shared/utils/AppError.js";
-import HTTP_STATUS, {
-  GITHUB_OAUTH_MESSAGES,
-} from "../../constants/messages.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
+import { GITHUB_OAUTH_MESSAGES } from "../../constants/messages.js";
 import { successResponse } from "../../shared/utils/apiResponse.js";
 
 export const githubAuth = asyncHandler(async (req, res) => {
@@ -33,6 +32,8 @@ export const githubCallback = asyncHandler(async (req, res) => {
   }
 
   const oauthState = await githubService.getOAuthState(state);
+  console.log("Searching for state:", state);
+  console.log("OAuth state result:", oauthState);
 
   if (!oauthState) {
     throw new AppError(
@@ -59,6 +60,21 @@ export const githubCallback = asyncHandler(async (req, res) => {
   await githubService.deleteOAuthState(state);
 
   console.log("Token exchange successful");
+  console.log("TOKEN DATA", tokenData);
+  console.log("ACCESS TOKEN ", tokenData.access_token);
 
-  successResponse(res, HTTP_STATUS.OK, GITHUB_OAUTH_MESSAGES.CONNECT_SUCCESS, );
+  const githubProfile = await githubService.getGithubProfile(
+    tokenData.access_token,
+  );
+
+  const githubAccount = await githubService.saveGithubAccount(
+    oauthState.userId,
+    githubProfile,
+    tokenData.access_token,
+  );
+
+  successResponse(res, HTTP_STATUS.OK, GITHUB_OAUTH_MESSAGES.CONNECT_SUCCESS, {
+    githubId: githubAccount.githubId,
+    githubUsername: githubAccount.githubUsername,
+  });
 });
