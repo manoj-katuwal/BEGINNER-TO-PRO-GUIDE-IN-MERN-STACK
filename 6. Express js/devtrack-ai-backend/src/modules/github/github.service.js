@@ -82,7 +82,6 @@ export const deleteGithubAccount = async (userId) => {
 };
 
 export const getGithubRepositories = async (accessToken) => {
-
   const response = await axios.get("https://api.github.com/user/repos", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -130,5 +129,49 @@ export const calculateRepositoryAnalytics = (repositories) => {
     totalStars,
     totalForks,
     languages,
+  };
+};
+
+export const getRepositoryCommits = async (accessToken, owner, repo) => {
+  const response = await axios.get(
+    `https://api.github.com/repos/${owner}/${repo}/commits`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/vnd.github+json",
+      },
+      params: {
+        per_page: 100,
+      },
+    },
+  );
+
+  return response.data;
+};
+
+export const getGithubCommitAnalytics = async (userId) => {
+  const githubAccount = await githubRepo.findGithubAccountByUserId(userId);
+
+  if (!githubAccount) {
+    throw new AppError(
+      "No GitHub account is connected to this user.",
+      HTTP_STATUS.NOT_FOUND,
+    );
+  }
+
+  const accessToken = decrypt(githubAccount.accessToken);
+
+  const repositories = await getGithubRepositories(userId);
+
+  const commitResults = await Promise.all(
+    repositories.map((repo) =>
+      getRepositoryCommits(accessToken, repo.owner.login, repo.name),
+    ),
+  );
+
+  const commits = commitResults.flat();
+
+  return {
+    totalCommits: commits.length,
   };
 };

@@ -163,3 +163,14 @@ export const deleteGithubAccount = asyncHandler(async (req, res) => {
     GITHUB_OAUTH_MESSAGES.DISCONNECT_SUCCESS,
   );
 });
+
+export const getGithubCommitAnalytics = asyncHandler(async (req, res) => {
+  const analytics = await githubService.getGithubCommitAnalytics(req.user.id);
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    "GitHub commit analytics retrieved successfully.",
+    analytics,
+  );
+});
