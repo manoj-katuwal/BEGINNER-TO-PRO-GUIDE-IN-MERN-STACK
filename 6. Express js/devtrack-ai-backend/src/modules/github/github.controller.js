@@ -125,6 +125,28 @@ export const getGithubRepositories = asyncHandler(async (req, res) => {
   );
 });
 
+export const getRepositoryAnalytics = asyncHandler(async (req, res) => {
+  const githubAccount = await githubService.getGithubAccount(req.user.id);
+
+  if (!githubAccount) {
+    throw new AppError(
+      "No GitHub account is connected to this user.",
+      HTTP_STATUS.NOT_FOUND,
+    );
+  }
+
+  const accessToken = decrypt(githubAccount.accessToken);
+  const repositories = await githubService.getGithubRepositories(accessToken);
+  const analytics = githubService.calculateRepositoryAnalytics(repositories);
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    "GitHub repository analytics retrieved successfully.",
+    analytics,
+  );
+});
+
 export const deleteGithubAccount = asyncHandler(async (req, res) => {
   const deletedCount = await githubService.deleteGithubAccount(req.user.id);
 

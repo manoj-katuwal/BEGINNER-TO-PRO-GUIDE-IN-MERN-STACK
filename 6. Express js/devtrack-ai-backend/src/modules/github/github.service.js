@@ -97,3 +97,38 @@ export const getGithubRepositories = async (accessToken) => {
 
   return response.data;
 };
+
+export const calculateRepositoryAnalytics = (repositories) => {
+  const totalRepositories = repositories.length;
+
+  const publicRepositories = repositories.filter(
+    (repo) => !repo.private,
+  ).length;
+
+  const privateRepositories = repositories.filter(
+    (repo) => repo.private,
+  ).length;
+
+  const totalStars = repositories.reduce(
+    (total, repo) => total + repo.stargazers_count,
+    0,
+  );
+
+  const totalForks = repositories.reduce(
+    (total, repo) => total + repo.forks_count,
+    0,
+  );
+
+  const languages = [
+    ...new Set(repositories.map((repo) => repo.language).filter(Boolean)),
+  ];
+
+  return {
+    totalRepositories,
+    publicRepositories,
+    privateRepositories,
+    totalStars,
+    totalForks,
+    languages,
+  };
+};
