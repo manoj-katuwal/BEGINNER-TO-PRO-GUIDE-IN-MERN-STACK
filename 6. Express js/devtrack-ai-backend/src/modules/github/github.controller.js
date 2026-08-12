@@ -172,3 +172,14 @@ export const getGithubCommitAnalytics = asyncHandler(async (req, res) => {
     analytics,
   );
 });
+
+export const getGithubLanguageAnalytics = asyncHandler(async (req, res) => {
+  const analytics = await githubService.getGithubLanguageAnalytics(req.user.id);
+
+  successResponse(
+    res,
+    HTTP_STATUS.OK,
+    "GitHub language analytics retrieved successfully.",
+    analytics,
+  );
+});

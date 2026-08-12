@@ -189,3 +189,43 @@ export const getGithubCommitAnalytics = async (userId) => {
     mostActiveRepository,
   };
 };
+
+const calculateLanguageAnalytics = (repositories) => {
+  const languages = {};
+
+  repositories.forEach((repo) => {
+    if (!repo.language) {
+      return;
+    }
+
+    languages[repo.language] = (languages[repo.language] || 0) + 1;
+  });
+
+  const repositoriesWithLanguage = Object.values(languages).reduce(
+    (total, count) => total + count,
+    0,
+  );
+
+  return Object.fromEntries(
+    Object.entries(languages).map(([language, count]) => [
+      language,
+      Number(((count / repositoriesWithLanguage) * 100).toFixed(2)),
+    ]),
+  );
+};
+
+export const getGithubLanguageAnalytics = async (userId) => {
+  const githubAccount = await githubRepo.findGithubAccountByUserId(userId);
+
+  if (!githubAccount) {
+    throw new AppError(
+      "No GitHub account is connected to this user.",
+      HTTP_STATUS.NOT_FOUND,
+    );
+  }
+
+  const accessToken = decrypt(githubAccount.accessToken);
+  const repositories = await getGithubRepositories(accessToken);
+
+  return calculateLanguageAnalytics(repositories);
+};

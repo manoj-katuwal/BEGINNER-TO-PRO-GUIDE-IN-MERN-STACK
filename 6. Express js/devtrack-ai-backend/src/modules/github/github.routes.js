@@ -3,6 +3,7 @@ import {
   deleteGithubAccount,
   getGithubAccount,
   getGithubCommitAnalytics,
+  getGithubLanguageAnalytics,
   getGithubRepositories,
   getRepositoryAnalytics,
   githubAuth,
@@ -19,5 +20,6 @@ router.get("/repositories", authenticate, getGithubRepositories);
 router.get("/repositories/analytics", authenticate, getRepositoryAnalytics);
 router.delete("/me", authenticate, deleteGithubAccount);
 router.get("/analytics/commits", authenticate, getGithubCommitAnalytics);
+router.get("/analytics/languages", authenticate, getGithubLanguageAnalytics);
 
 export default router;
