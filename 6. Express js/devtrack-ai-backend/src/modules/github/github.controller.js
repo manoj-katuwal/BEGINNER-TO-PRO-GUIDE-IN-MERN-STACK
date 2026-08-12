@@ -61,8 +61,6 @@ export const githubCallback = asyncHandler(async (req, res) => {
   await githubService.deleteOAuthState(state);
 
   console.log("Token exchange successful");
-  console.log("TOKEN DATA", tokenData);
-  console.log("ACCESS TOKEN ", tokenData.access_token);
 
   const githubProfile = await githubService.getGithubProfile(
     tokenData.access_token,

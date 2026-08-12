@@ -2,6 +2,7 @@ import express from "express";
 import {
   deleteGithubAccount,
   getGithubAccount,
+  getGithubCommitAnalytics,
   getGithubRepositories,
   getRepositoryAnalytics,
   githubAuth,
@@ -17,5 +18,6 @@ router.get("/me", authenticate, getGithubAccount);
 router.get("/repositories", authenticate, getGithubRepositories);
 router.get("/repositories/analytics", authenticate, getRepositoryAnalytics);
 router.delete("/me", authenticate, deleteGithubAccount);
+router.get("/analytics/commits", authenticate, getGithubCommitAnalytics);
 
 export default router;

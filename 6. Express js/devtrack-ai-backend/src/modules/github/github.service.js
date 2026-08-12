@@ -1,7 +1,9 @@
 import * as githubRepo from "./github.repository.js";
 import axios from "axios";
-// import { encrypt } from "../../shared/utils/encryption.js";
 import { encrypt } from "../../shared/utils/encrypt.js";
+import { decrypt } from "../../shared/utils/decrypt.js";
+import AppError from "../../shared/utils/AppError.js";
+import HTTP_STATUS from "../../constants/httpStatus.js";
 
 export const saveOAuthState = async (userId, state, expiresAt) => {
   return await githubRepo.createOAuthState({
@@ -30,8 +32,6 @@ export const exchangeCodeForToken = async (code) => {
       },
     },
   );
-  console.log(response);
-
   return response.data;
 };
 
@@ -46,10 +46,7 @@ export const getGithubProfile = async (accessToken) => {
       Accept: "application/vnd.github+json",
     },
   });
-  console.log(response);
-  console.log(response.data);
-
-  return await response.data;
+  return response.data;
 };
 
 export const saveGithubAccount = async (userId, githubProfile, accessToken) => {
@@ -161,17 +158,34 @@ export const getGithubCommitAnalytics = async (userId) => {
 
   const accessToken = decrypt(githubAccount.accessToken);
 
-  const repositories = await getGithubRepositories(userId);
+  const repositories = await getGithubRepositories(accessToken);
 
   const commitResults = await Promise.all(
-    repositories.map((repo) =>
-      getRepositoryCommits(accessToken, repo.owner.login, repo.name),
-    ),
+    repositories.map(async (repo) => {
+      const commits = await getRepositoryCommits(
+        accessToken,
+        repo.owner.login,
+        repo.name,
+      );
+
+      return {
+        repository: repo.name,
+        commits: commits.length,
+      };
+    }),
   );
 
-  const commits = commitResults.flat();
+  const totalCommits = commitResults.reduce(
+    (total, repo) => total + repo.commits,
+    0,
+  );
+
+  const mostActiveRepository =
+    [...commitResults].sort((a, b) => b.commits - a.commits)[0] || null;
 
   return {
-    totalCommits: commits.length,
+    totalCommits,
+    commitsByRepository: commitResults,
+    mostActiveRepository,
   };
 };
